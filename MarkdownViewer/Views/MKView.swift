@@ -10,25 +10,37 @@ import Textual
 
 struct MKView: View {
     @Environment(TextModel.self) private var textModel
-    
+
     let title: String
-    let paneHeight: CGFloat
-    
+
+    @State private var refreshID = UUID()
+    @State private var refreshTask: Task<Void, Never>?
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
                 Text(title).font(.headline)
-                //  InlineText(markdown: text)
+
                 StructuredText(markdown: textModel.text)
+                    .id(refreshID)
                     .textual.textSelection(.enabled)
                     .textual.structuredTextStyle(.gitHub)
-                    .id(textModel.text) // <-- force a refresh
             }
             .padding()
-            .frame(maxWidth: .infinity, minHeight: paneHeight, alignment: .topLeading)
+            .frame(maxWidth: .infinity, alignment: .topLeading)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(.background.secondary, in: RoundedRectangle(cornerRadius: 12))
+        .task {
+            refreshID = UUID()
+        }
+        .onChange(of: textModel.text, initial: false) { _, _ in
+            refreshTask?.cancel()
+            refreshTask = Task {
+                try? await Task.sleep(for: .milliseconds(250))
+                guard !Task.isCancelled else { return }
+                refreshID = UUID()
+            }
+        }
     }
 }
-
