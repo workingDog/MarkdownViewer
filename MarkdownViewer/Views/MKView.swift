@@ -17,7 +17,10 @@ struct MKView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
                 Text(title).font(.headline)
-                InlineText(markdown: text)
+              //  InlineText(markdown: text)
+                StructuredText(markdown: text)
+                    .textual.textSelection(.enabled)
+                    .textual.structuredTextStyle(.gitHub)
             }
             .padding()
             .frame(maxWidth: .infinity, minHeight: paneHeight, alignment: .topLeading)
