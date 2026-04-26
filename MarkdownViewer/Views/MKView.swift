@@ -21,11 +21,11 @@ struct MKView: View {
                 StructuredText(markdown: text)
                     .textual.textSelection(.enabled)
                     .textual.structuredTextStyle(.gitHub)
+                    .id(text) // <-- force a refresh
             }
             .padding()
             .frame(maxWidth: .infinity, minHeight: paneHeight, alignment: .topLeading)
         }
-        .id(text) // <-- force a refresh
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(.background.secondary, in: RoundedRectangle(cornerRadius: 12))
     }
