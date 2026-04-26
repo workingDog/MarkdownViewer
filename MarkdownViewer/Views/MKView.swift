@@ -9,19 +9,20 @@ import Textual
 
 
 struct MKView: View {
+    @Environment(TextModel.self) private var textModel
+    
     let title: String
-    @Binding var text: String
     let paneHeight: CGFloat
-
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
                 Text(title).font(.headline)
-              //  InlineText(markdown: text)
-                StructuredText(markdown: text)
+                //  InlineText(markdown: text)
+                StructuredText(markdown: textModel.text)
                     .textual.textSelection(.enabled)
                     .textual.structuredTextStyle(.gitHub)
-                    .id(text) // <-- force a refresh
+                    .id(textModel.text) // <-- force a refresh
             }
             .padding()
             .frame(maxWidth: .infinity, minHeight: paneHeight, alignment: .topLeading)

@@ -9,14 +9,16 @@ import UniformTypeIdentifiers
 
 
 struct EditableTextPane: View {
+    @Environment(TextModel.self) private var textModel
+    
     let title: String
-    @Binding var text: String
     let paneHeight: CGFloat
     
     @State private var fileURL: URL = FileManager.default.temporaryDirectory
     @State private var isTargeted = false
     
     var body: some View {
+        @Bindable var textModel = textModel
         ZStack {
             VStack(alignment: .leading, spacing: 12) {
                 Text(title).font(.headline)
@@ -33,7 +35,7 @@ struct EditableTextPane: View {
                         isTargeted = hovering
                     }
                 
-                TextEditor(text: $text)
+                TextEditor(text: $textModel.text)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .scrollContentBackground(.hidden)
                     .padding(8)
@@ -64,7 +66,7 @@ struct EditableTextPane: View {
             }
         }
         do {
-            text = try String(contentsOf: fileURL, encoding: .utf8)
+            textModel.text = try String(contentsOf: fileURL, encoding: .utf8)
         } catch {
             print(error)
         }

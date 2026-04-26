@@ -12,7 +12,8 @@ import AppKit
 
 
 struct ContentView: View {
-    @State private var model = TextModel()
+    @Environment(TextModel.self) private var textModel
+    
     @State private var splitRatio: CGFloat = 0.5
     @State private var isExporting = false
 
@@ -21,8 +22,6 @@ struct ContentView: View {
     private let outerPadding: CGFloat = 24
 
     var body: some View {
-        @Bindable var model = model
-
         GeometryReader { proxy in
             let contentWidth = proxy.size.width - outerPadding * 2
             let contentHeight = proxy.size.height - outerPadding * 2
@@ -33,13 +32,13 @@ struct ContentView: View {
             let rightWidth = availableWidth - leftWidth
 
             HStack(alignment: .top, spacing: 0) {
-                EditableTextPane(title: "Plain text", text: $model.text, paneHeight: contentHeight)
+                EditableTextPane(title: "Plain text", paneHeight: contentHeight)
                     .frame(width: leftWidth, height: contentHeight, alignment: .topLeading)
 
                 divider(availableWidth: availableWidth, leftWidth: leftWidth)
                     .frame(height: contentHeight)
 
-                MKView(title: "Markdown", text: $model.text, paneHeight: contentHeight)
+                MKView(title: "Markdown", paneHeight: contentHeight)
                     .frame(width: rightWidth, height: contentHeight, alignment: .topLeading)
             }
             .padding(outerPadding)
@@ -49,12 +48,14 @@ struct ContentView: View {
                 ToolbarItem {
                     Button("Save") {
                         isExporting = true
-                    }.buttonStyle(.glass)
+                    }
+                    .buttonStyle(.glass)
+                    .tint(Color.accentColor)
                 }
             }
         .fileExporter(
             isPresented: $isExporting,
-            document: TextDocument(text: model.text),
+            document: TextDocument(text: textModel.text),
             contentType: .text,
             defaultFilename: "Untitled.md"
         ) { result in
