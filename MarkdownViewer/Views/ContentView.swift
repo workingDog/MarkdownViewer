@@ -27,7 +27,6 @@ struct ContentView: View {
                 .frame(minWidth: 160, maxWidth: .infinity, maxHeight: .infinity)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(24)
         .toolbar {
             ToolbarItem {
                 Button("Save") {
