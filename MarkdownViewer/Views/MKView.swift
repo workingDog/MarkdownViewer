@@ -9,21 +9,19 @@ import Textual
 
 
 struct MKView: View {
-    @Environment(TextModel.self) private var textModel
-
     let title: String
-//    @State private var attributed = AttributedString()
-
+    @Binding var text: String
+    
+    // hack to refresh StructuredText
     @State private var refreshID = UUID()
     @State private var refreshTask: Task<Void, Never>?
-
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
                 Text(title).font(.headline)
-//                Text(attributed)
-
-                StructuredText(markdown: textModel.text)
+                
+                StructuredText(markdown: text)
                     .id(refreshID)
                     .textual.textSelection(.enabled)
                     .textual.structuredTextStyle(.gitHub)
@@ -34,14 +32,9 @@ struct MKView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(.background.secondary, in: RoundedRectangle(cornerRadius: 12))
         .task {
-//            do {
-//                attributed = try AttributedString(markdown: textModel.text)
-//            } catch {
-//                print(error)
-//            }
             refreshID = UUID()
         }
-        .onChange(of: textModel.text, initial: false) { _, _ in
+        .onChange(of: text, initial: false) { _, _ in
             refreshTask?.cancel()
             refreshTask = Task {
                 try? await Task.sleep(for: .milliseconds(250))

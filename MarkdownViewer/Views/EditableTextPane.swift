@@ -9,16 +9,14 @@ import UniformTypeIdentifiers
 
 
 struct EditableTextPane: View {
-    @Environment(TextModel.self) private var textModel
-    
     let title: String
+    @Binding var text: String
     
     @State private var fileURL: URL = FileManager.default.temporaryDirectory
     @State private var showTextImporter = false
     @State private var isTargeted = false
     
     var body: some View {
-        @Bindable var textModel = textModel
         ZStack {
             VStack(alignment: .leading, spacing: 15) {
                 Text(title).font(.headline)
@@ -42,7 +40,7 @@ struct EditableTextPane: View {
                 .frame(height: 80)
                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
-                TextEditor(text: $textModel.text)
+                TextEditor(text: $text)
                     #if os(iOS) || os(visionOS)
                       .textInputAutocapitalization(.none)
                     #endif
@@ -91,7 +89,7 @@ struct EditableTextPane: View {
             }
         }
         do {
-            textModel.text = try String(contentsOf: fileURL, encoding: .utf8)
+            text = try String(contentsOf: fileURL, encoding: .utf8)
         } catch {
             print(error)
         }
