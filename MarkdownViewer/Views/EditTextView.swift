@@ -9,6 +9,8 @@ import UniformTypeIdentifiers
 
 
 struct EditTextView: View {
+    @AppStorage("fontSize") private var fontSize = 20.0
+    
     let title: String
     @Binding var text: String
     
@@ -44,6 +46,7 @@ struct EditTextView: View {
                     #if os(iOS) || os(visionOS)
                       .textInputAutocapitalization(.none)
                     #endif
+                    .font(.system(size: fontSize))
                     .autocorrectionDisabled(true)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .scrollContentBackground(.hidden)

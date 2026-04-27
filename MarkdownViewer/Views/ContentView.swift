@@ -13,6 +13,7 @@ import AppKit
 
 struct ContentView: View {
     @State private var isExporting = false
+    @State private var showSettings = false
     @State private var text: String = ""
     @State private var previewTask: Task<Void, Never>?
     
@@ -32,7 +33,16 @@ struct ContentView: View {
                     isExporting = true
                 }
                 .buttonStyle(.glass)
-                .tint(.accentColor)
+                .tint(.accentColor.opacity(0.8))
+            }
+            ToolbarItem(placement: .secondaryAction) {
+                Button {
+                    showSettings = true
+                } label: {
+                    Image(systemName: "gear").font(.title2)
+                }
+                .buttonStyle(.glass)
+                .tint(.gray.opacity(0.8))
             }
         }
         .fileExporter(
@@ -45,6 +55,9 @@ struct ContentView: View {
                 case .success(let url): print("---> saved to \(url)")
                 case .failure(let error): print("---> save error: \(error)")
             }
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
         }
     }
 }
