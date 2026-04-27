@@ -26,7 +26,7 @@ struct EditableTextPane: View {
                 ZStack {
                     Color.green.opacity(0.3).ignoresSafeArea()
                     VStack(spacing: 5) {
-                        Text("Drop File area")
+                        Text("Drop File here")
                         Text("or")
                         Button("Browse for File") {
                             showTextImporter = true
@@ -40,6 +40,7 @@ struct EditableTextPane: View {
                     }
                 }
                 .frame(height: 80)
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
                 TextEditor(text: $textModel.text)
                     #if os(iOS) || os(visionOS)
