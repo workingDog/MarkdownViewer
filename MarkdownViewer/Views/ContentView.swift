@@ -15,8 +15,7 @@ struct ContentView: View {
     @State private var isExporting = false
     @State private var showSettings = false
     @State private var text: String = ""
-    @State private var previewTask: Task<Void, Never>?
-    
+  
     
     var body: some View {
         HSplitView {
