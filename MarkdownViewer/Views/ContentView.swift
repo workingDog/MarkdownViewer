@@ -19,7 +19,7 @@ struct ContentView: View {
     
     var body: some View {
         HSplitView {
-            EditableTextPane(title: "Plain text", text: $text)
+            EditTextView(title: "Plain text", text: $text)
                 .frame(minWidth: 160, maxWidth: .infinity, maxHeight: .infinity)
             
             MKView(title: "Markdown", text: $text)

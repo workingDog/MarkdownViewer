@@ -1,5 +1,5 @@
 //
-//  EditableTextPane.swift
+//  EditTextView.swift
 //  MarkdownViewer
 //
 //  Created by Ringo Wathelet on 2026/04/26.
@@ -8,7 +8,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 
-struct EditableTextPane: View {
+struct EditTextView: View {
     let title: String
     @Binding var text: String
     
@@ -47,7 +47,7 @@ struct EditableTextPane: View {
                     .autocorrectionDisabled(true)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .scrollContentBackground(.hidden)
-                    .padding(8)
+                    .padding(4)
                     .background(.background, in: RoundedRectangle(cornerRadius: 8))
             }
             .padding()
