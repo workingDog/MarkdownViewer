@@ -12,6 +12,7 @@ struct MKView: View {
     @Environment(TextModel.self) private var textModel
 
     let title: String
+//    @State private var attributed = AttributedString()
 
     @State private var refreshID = UUID()
     @State private var refreshTask: Task<Void, Never>?
@@ -20,6 +21,7 @@ struct MKView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
                 Text(title).font(.headline)
+//                Text(attributed)
 
                 StructuredText(markdown: textModel.text)
                     .id(refreshID)
@@ -32,6 +34,11 @@ struct MKView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(.background.secondary, in: RoundedRectangle(cornerRadius: 12))
         .task {
+//            do {
+//                attributed = try AttributedString(markdown: textModel.text)
+//            } catch {
+//                print(error)
+//            }
             refreshID = UUID()
         }
         .onChange(of: textModel.text, initial: false) { _, _ in
