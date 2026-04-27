@@ -14,27 +14,38 @@ struct EditableTextPane: View {
     let title: String
     
     @State private var fileURL: URL = FileManager.default.temporaryDirectory
+    @State private var showTextImporter = false
     @State private var isTargeted = false
     
     var body: some View {
         @Bindable var textModel = textModel
         ZStack {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 15) {
                 Text(title).font(.headline)
                 
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(isTargeted ? Color.accentColor.opacity(0.2) : Color.green.opacity(0.3))
-                    .frame(height: 50)
-                    .overlay {
-                        Text("Drop file area").foregroundStyle(.secondary)
+                ZStack {
+                    Color.green.opacity(0.3).ignoresSafeArea()
+                    VStack(spacing: 5) {
+                        Text("Drop File area")
+                        Text("or")
+                        Button("Browse for File") {
+                            showTextImporter = true
+                        }
+                        .foregroundColor(.accentColor)
                     }
                     .dropDestination(for: URL.self) { urls, _ in
                         handleDrop(urls: urls)
                     } isTargeted: { hovering in
                         isTargeted = hovering
                     }
-                
+                }
+                .frame(height: 80)
+
                 TextEditor(text: $textModel.text)
+                    #if os(iOS) || os(visionOS)
+                      .textInputAutocapitalization(.none)
+                    #endif
+                    .autocorrectionDisabled(true)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .scrollContentBackground(.hidden)
                     .padding(8)
@@ -45,6 +56,21 @@ struct EditableTextPane: View {
         }
         .overlay {
             Rectangle().fill(Color.accentColor.opacity(isTargeted ? 0.2 : 0))
+        }
+        .fileImporter(
+            isPresented: $showTextImporter,
+            allowedContentTypes: [.item],
+            allowsMultipleSelection: false
+        ) { result in
+            switch result {
+            case .success(let urls):
+                if let file = urls.first {
+                    fileURL = file
+                    readFileContent()
+                }
+            case .failure(let error):
+                print(error)
+            }
         }
     }
     
