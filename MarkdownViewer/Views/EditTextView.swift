@@ -53,7 +53,7 @@ struct EditTextView: View {
                     .padding(4)
                     .background(.background, in: RoundedRectangle(cornerRadius: 8))
             }
-            .padding()
+            .padding(8)
             .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
         }
         .overlay {

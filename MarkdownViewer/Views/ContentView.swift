@@ -27,14 +27,14 @@ struct ContentView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .toolbar {
-            ToolbarItem {
+            ToolbarItem(placement: .principal) {
                 Button("Save") {
                     isExporting = true
                 }
                 .buttonStyle(.glass)
                 .tint(.accentColor.opacity(0.8))
             }
-            ToolbarItem(placement: .secondaryAction) {
+            ToolbarItem(placement: .confirmationAction) {
                 Button {
                     showSettings = true
                 } label: {
