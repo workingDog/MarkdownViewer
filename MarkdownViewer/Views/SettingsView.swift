@@ -11,9 +11,14 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("fontSize") private var fontSize = 20.0
-    
-    @State private var sliderFontSize = 20.0
 
+    private var roundSize: Binding<Double> {
+        Binding(
+            get: { fontSize },
+            set: { fontSize = $0.rounded() }
+        )
+    }
+    
     var body: some View {
         ZStack {
             AppTheme.backGradient.ignoresSafeArea()
@@ -32,22 +37,11 @@ struct SettingsView: View {
 
                 VStack {
                     Text("Editor Font Size").padding(10)
-
-                    Text("\(Int(sliderFontSize.rounded()))")
-
-                    Slider(value: $sliderFontSize, in: 10...40)
-                        .padding(20)
-                        .onChange(of: sliderFontSize) {
-                            fontSize = sliderFontSize.rounded()
-                        }
-
+                    Text("\(Int(fontSize.rounded()))")
+                    Slider(value: roundSize, in: 10...40).padding(20)
                     Spacer()
                 }
             }
         }
-        .onAppear {
-            sliderFontSize = fontSize
-        }
     }
 }
-
