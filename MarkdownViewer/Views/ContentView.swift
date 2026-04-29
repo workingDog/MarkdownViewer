@@ -18,27 +18,28 @@ enum ViewMode: String, CaseIterable, Hashable {
 }
 
 struct ContentView: View {
+    @State private var text: String = ""
+    
     @State private var isExporting = false
     @State private var showSettings = false
-    @State private var text: String = ""
-  
     @State private var viewMode: ViewMode = .split
     
-    @ViewBuilder var splitView: some View {
-        HSplitView {
-            EditTextView(title: "Edit", text: $text)
-                .frame(minWidth: 160, maxWidth: .infinity, maxHeight: .infinity)
-            
-            MKView(title: "Preview", text: $text)
-                .frame(minWidth: 160, maxWidth: .infinity, maxHeight: .infinity)
-        }
-    }
-    
+
     var body: some View {
-        Group {
+        VStack(alignment: .leading) {
+            DropFileView(text: $text)
             switch viewMode {
                 case .edit: EditTextView(title: "Edit", text: $text)
-                case .split: splitView
+                
+                case .split:
+                HSplitView {
+                    EditTextView(title: "Edit", text: $text)
+                        .frame(minWidth: 160, maxWidth: .infinity, maxHeight: .infinity)
+                    
+                    MKView(title: "Preview", text: $text)
+                        .frame(minWidth: 160, maxWidth: .infinity, maxHeight: .infinity)
+                }
+                
                 case .preview: MKView(title: "Preview", text: $text)
             }
         }
