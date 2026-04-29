@@ -57,14 +57,20 @@ struct ContentView: View {
 
             ToolbarItem(placement: .confirmationAction) {
                 HStack {
-                    Button("Save") { isExporting = true }
-                        .tint(.accentColor.opacity(0.7))
+                    Button { isExporting = true } label: {
+                        Image(systemName: "square.and.arrow.up").font(.title2)
+                    }
+                    .help("Export")
+                    .accessibilityLabel("Export")
+                    
                     Button { showSettings = true } label: {
                         Image(systemName: "gear").font(.title2)
                     }
-                    .tint(.gray.opacity(0.8))
+                    .help("Settings")
+                    .accessibilityLabel("Settings")
                 }
                 .buttonStyle(.glass)
+                .tint(.gray.opacity(0.8))
             }
         }
         .fileExporter(
