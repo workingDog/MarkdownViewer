@@ -11,37 +11,60 @@ import AppKit
 #endif
 
 
+enum ViewMode: String, CaseIterable, Hashable {
+    case edit = "Edit"
+    case split = "Split"
+    case preview = "Preview"
+}
+
 struct ContentView: View {
     @State private var isExporting = false
     @State private var showSettings = false
     @State private var text: String = ""
   
+    @State private var viewMode: ViewMode = .split
     
-    var body: some View {
+    @ViewBuilder var splitView: some View {
         HSplitView {
-            EditTextView(title: "Plain text", text: $text)
+            EditTextView(title: "Edit", text: $text)
                 .frame(minWidth: 160, maxWidth: .infinity, maxHeight: .infinity)
             
-            MKView(title: "Markdown", text: $text)
+            MKView(title: "Preview", text: $text)
                 .frame(minWidth: 160, maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
+    
+    var body: some View {
+        Group {
+            switch viewMode {
+                case .edit: EditTextView(title: "Edit", text: $text)
+                case .split: splitView
+                case .preview: MKView(title: "Preview", text: $text)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .toolbar {
+            
             ToolbarItem(placement: .principal) {
-                Button("Save") {
-                    isExporting = true
+                Picker("", selection: $viewMode) {
+                    Text("Edit").tag(ViewMode.edit)
+                    Text("Split").tag(ViewMode.split)
+                    Text("Preview").tag(ViewMode.preview)
                 }
-                .buttonStyle(.glass)
-                .tint(.accentColor.opacity(0.8))
+                .pickerStyle(.segmented)
+                .frame(width: 220)
             }
+
             ToolbarItem(placement: .confirmationAction) {
-                Button {
-                    showSettings = true
-                } label: {
-                    Image(systemName: "gear").font(.title2)
+                HStack {
+                    Button("Save") { isExporting = true }
+                        .tint(.accentColor.opacity(0.7))
+                    Button { showSettings = true } label: {
+                        Image(systemName: "gear").font(.title2)
+                    }
+                    .tint(.gray.opacity(0.8))
                 }
                 .buttonStyle(.glass)
-                .tint(.gray.opacity(0.8))
             }
         }
         .fileExporter(
