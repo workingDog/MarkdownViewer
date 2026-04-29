@@ -17,10 +17,9 @@ struct MKView: View {
     @State private var refreshTask: Task<Void, Never>?
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
-                Text(title).font(.headline)
-                
+        VStack(alignment: .leading, spacing: 12) {
+            Text(title).font(.headline)
+            ScrollView {
                 StructuredText(markdown: text)
                     .id(refreshID)
                     .textual.textSelection(.enabled)
@@ -29,6 +28,7 @@ struct MKView: View {
             .padding()
             .frame(maxWidth: .infinity, alignment: .topLeading)
         }
+        .padding(8)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(.background.secondary, in: RoundedRectangle(cornerRadius: 12))
         .task {
