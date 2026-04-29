@@ -24,28 +24,40 @@ struct ContentView: View {
     @State private var showSettings = false
     @State private var viewMode: ViewMode = .split
     
-
+    @ViewBuilder
+    private var mainView: some View {
+        switch viewMode {
+        case .edit:
+            editorView
+            
+        case .split:
+            HSplitView {
+                editorView
+                previewView
+            }
+            
+        case .preview:
+            previewView
+        }
+    }
+    
+    private var editorView: some View {
+        EditTextView(title: "Edit", text: $text)
+            .frame(minWidth: 160, maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    private var previewView: some View {
+        MKView(title: "Preview", text: $text)
+            .frame(minWidth: 160, maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
     var body: some View {
         VStack(alignment: .leading) {
             DropFileView(text: $text)
-            switch viewMode {
-                case .edit: EditTextView(title: "Edit", text: $text)
-                
-                case .split:
-                HSplitView {
-                    EditTextView(title: "Edit", text: $text)
-                        .frame(minWidth: 160, maxWidth: .infinity, maxHeight: .infinity)
-                    
-                    MKView(title: "Preview", text: $text)
-                        .frame(minWidth: 160, maxWidth: .infinity, maxHeight: .infinity)
-                }
-                
-                case .preview: MKView(title: "Preview", text: $text)
-            }
+            mainView
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .toolbar {
-            
             ToolbarItem(placement: .principal) {
                 Picker("", selection: $viewMode) {
                     Text("Edit").tag(ViewMode.edit)
@@ -55,7 +67,6 @@ struct ContentView: View {
                 .pickerStyle(.segmented)
                 .frame(width: 220)
             }
-
             ToolbarItem(placement: .confirmationAction) {
                 HStack {
                     Button { isExporting = true } label: {
@@ -81,8 +92,8 @@ struct ContentView: View {
             defaultFilename: "Untitled"
         ) { result in
             switch result {
-                case .success(let url): print("---> saved to \(url)")
-                case .failure(let error): print("---> save error: \(error)")
+            case .success(let url): print("---> saved to \(url)")
+            case .failure(let error): print("---> save error: \(error)")
             }
         }
         .sheet(isPresented: $showSettings) {
@@ -94,13 +105,13 @@ struct ContentView: View {
 struct TextDocument: FileDocument {
     static var readableContentTypes: [UTType] { [.plainText] }
     static var writableContentTypes: [UTType] { [.plainText] }
-
+    
     var text: String
-
+    
     init(text: String = "") {
         self.text = text
     }
-
+    
     init(configuration: ReadConfiguration) throws {
         guard let data = configuration.file.regularFileContents,
               let text = String(data: data, encoding: .utf8) else {
@@ -108,7 +119,7 @@ struct TextDocument: FileDocument {
         }
         self.text = text
     }
-
+    
     func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
         FileWrapper(regularFileWithContents: Data(text.utf8))
     }
