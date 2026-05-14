@@ -18,7 +18,7 @@ struct MKView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title).font(.headline)
             ScrollView {
-                StructuredText(markdown: displayedText)
+                StructuredText(markdown: displayedText, syntaxExtensions: [.math])
                     .textual.textSelection(.enabled)
                     .textual.structuredTextStyle(.gitHub)
             }
