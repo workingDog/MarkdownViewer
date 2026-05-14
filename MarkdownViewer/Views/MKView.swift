@@ -11,17 +11,14 @@ import Textual
 struct MKView: View {
     let title: String
     @Binding var text: String
-    
-    // hack to refresh StructuredText
-    @State private var refreshID = UUID()
-    @State private var refreshTask: Task<Void, Never>?
-    
+
+    @State private var displayedText = ""
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title).font(.headline)
             ScrollView {
-                StructuredText(markdown: text)
-                    .id(refreshID)
+                StructuredText(markdown: displayedText)
                     .textual.textSelection(.enabled)
                     .textual.structuredTextStyle(.gitHub)
             }
@@ -31,16 +28,14 @@ struct MKView: View {
         .padding(8)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(.background.secondary, in: RoundedRectangle(cornerRadius: 12))
-        .task {
-            refreshID = UUID()
+        .task(id: text) {
+            // debounce rapid edits
+            try? await Task.sleep(for: .milliseconds(200))
+            guard !Task.isCancelled else { return }
+            displayedText = text
         }
-        .onChange(of: text, initial: false) { _, _ in
-            refreshTask?.cancel()
-            refreshTask = Task {
-                try? await Task.sleep(for: .milliseconds(250))
-                guard !Task.isCancelled else { return }
-                refreshID = UUID()
-            }
+        .onAppear {
+            displayedText = text
         }
     }
 }

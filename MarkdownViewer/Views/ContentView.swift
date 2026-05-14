@@ -24,23 +24,6 @@ struct ContentView: View {
     @State private var showSettings = false
     @State private var viewMode: ViewMode = .split
     
-    @ViewBuilder
-    private var mainView: some View {
-        switch viewMode {
-        case .edit:
-            editorView
-            
-        case .split:
-            HSplitView {
-                editorView
-                previewView
-            }
-            
-        case .preview:
-            previewView
-        }
-    }
-    
     private var editorView: some View {
         EditTextView(title: "Edit", text: $text)
             .frame(minWidth: 160, maxWidth: .infinity, maxHeight: .infinity)
@@ -51,10 +34,21 @@ struct ContentView: View {
             .frame(minWidth: 160, maxWidth: .infinity, maxHeight: .infinity)
     }
     
+    private var splitView: some View {
+        HSplitView {
+            editorView
+            previewView
+        }
+    }
+    
     var body: some View {
         VStack(alignment: .leading) {
             DropFileView(text: $text)
-            mainView
+            switch viewMode {
+                case .edit: editorView
+                case .split: splitView
+                case .preview: previewView
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .toolbar {
