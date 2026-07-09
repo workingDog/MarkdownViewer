@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
+
 
 enum AppTheme {
     static let backGradient = LinearGradient(
@@ -21,9 +23,31 @@ enum AppTheme {
 
 @main
 struct MarkdownViewerApp: App {
+    
+    @State private var text: String = ""
+    
     var body: some Scene {
-        WindowGroup {
-            ContentView()
+        Window("Markdown Viewer", id: "main") {
+            ContentView(text: $text)
+                .onOpenURL { url in
+                    readFileContent(url: url)
+                }
         }
     }
+
+    private func readFileContent(url: URL) {
+        let didStartAccessing = url.startAccessingSecurityScopedResource()
+        defer {
+            if didStartAccessing {
+                url.stopAccessingSecurityScopedResource()
+            }
+        }
+        
+        do {
+            text = try String(contentsOf: url, encoding: .utf8)
+        } catch {
+            print(error)
+        }
+    }
+    
 }

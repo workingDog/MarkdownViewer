@@ -18,7 +18,8 @@ enum ViewMode: String, CaseIterable, Hashable {
 }
 
 struct ContentView: View {
-    @State private var text: String = ""
+
+    @Binding var text: String
     
     @State private var isExporting = false
     @State private var showSettings = false
@@ -31,6 +32,11 @@ struct ContentView: View {
     
     private var previewView: some View {
         MKView(title: "Preview", text: $text)
+            .frame(minWidth: 160, maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    private var previewView2: some View {
+        HtmlView(title: "Preview", text: $text)
             .frame(minWidth: 160, maxWidth: .infinity, maxHeight: .infinity)
     }
     
