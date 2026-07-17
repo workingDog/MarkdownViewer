@@ -10,8 +10,8 @@ import UniformTypeIdentifiers
 
 struct DropFileView: View {
     @Binding var text: String
+    @Binding var fileURL: URL?
     
-    @State private var fileURL: URL = FileManager.default.temporaryDirectory
     @State private var showTextImporter = false
     @State private var isTargeted = false
     
@@ -50,33 +50,21 @@ struct DropFileView: View {
             case .success(let urls):
                 if let file = urls.first {
                     fileURL = file
-                    readFileContent()
+                    text = Utility.readFileContent(fileURL: file)
                 }
             case .failure(let error):
                 print(error)
             }
+        }
+        .onAppear {
+            fileURL = FileManager.default.temporaryDirectory
         }
     }
     
     private func handleDrop(urls: [URL]) -> Bool {
         guard let url = urls.first, url.isFileURL else { return false }
         fileURL = url
-        readFileContent()
+        text = Utility.readFileContent(fileURL: url)
         return true
-    }
-    
-    private func readFileContent() {
-        let didStartAccessing = fileURL.startAccessingSecurityScopedResource()
-        defer {
-            if didStartAccessing {
-                fileURL.stopAccessingSecurityScopedResource()
-            }
-        }
-        
-        do {
-            text = try String(contentsOf: fileURL, encoding: .utf8)
-        } catch {
-            print(error)
-        }
     }
 }

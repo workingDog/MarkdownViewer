@@ -13,10 +13,19 @@ struct EditTextView: View {
     
     let title: String
     @Binding var text: String
+    @Binding var fileURL: URL?
     
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
-            Text(title).font(.headline)
+            HStack {
+                Text(title).font(.headline)
+                Spacer()
+                Button("Save") {
+                    if let fileURL {
+                        Utility.writeFileContent(text: text, fileURL: fileURL)
+                    }
+                }.buttonStyle(.glass)
+            }.frame(width: 150)
             
             TextEditor(text: $text)
 #if os(iOS) || os(visionOS)
@@ -32,4 +41,5 @@ struct EditTextView: View {
         .padding(8)
         .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
     }
+    
 }

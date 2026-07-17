@@ -23,31 +23,16 @@ enum AppTheme {
 
 @main
 struct MarkdownViewerApp: App {
-    
     @State private var text: String = ""
+    @State private var fileURL: URL?
     
     var body: some Scene {
         Window("Markdown Viewer", id: "main") {
-            ContentView(text: $text)
+            ContentView(text: $text, fileURL: $fileURL)
                 .onOpenURL { url in
-                    readFileContent(url: url)
+                    fileURL = url
+                    text = Utility.readFileContent(fileURL: url)
                 }
         }
     }
-
-    private func readFileContent(url: URL) {
-        let didStartAccessing = url.startAccessingSecurityScopedResource()
-        defer {
-            if didStartAccessing {
-                url.stopAccessingSecurityScopedResource()
-            }
-        }
-        
-        do {
-            text = try String(contentsOf: url, encoding: .utf8)
-        } catch {
-            print(error)
-        }
-    }
-    
 }

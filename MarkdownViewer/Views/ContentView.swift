@@ -20,13 +20,14 @@ enum ViewMode: String, CaseIterable, Hashable {
 struct ContentView: View {
 
     @Binding var text: String
+    @Binding var fileURL: URL?
     
     @State private var isExporting = false
     @State private var showSettings = false
     @State private var viewMode: ViewMode = .split
     
     private var editorView: some View {
-        EditTextView(title: "Edit", text: $text)
+        EditTextView(title: "Edit", text: $text, fileURL: $fileURL)
             .frame(minWidth: 160, maxWidth: .infinity, maxHeight: .infinity)
     }
     
@@ -49,7 +50,7 @@ struct ContentView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            DropFileView(text: $text)
+            DropFileView(text: $text, fileURL: $fileURL)
             switch viewMode {
                 case .edit: editorView
                 case .split: splitView
@@ -92,8 +93,8 @@ struct ContentView: View {
             defaultFilename: "Untitled"
         ) { result in
             switch result {
-            case .success(let url): print("---> saved to \(url)")
-            case .failure(let error): print("---> save error: \(error)")
+                case .success(let url): print("---> saved to \(url)")
+                case .failure(let error): print("---> save error: \(error)")
             }
         }
         .sheet(isPresented: $showSettings) {
