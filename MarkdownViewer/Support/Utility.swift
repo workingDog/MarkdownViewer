@@ -33,8 +33,11 @@ struct Utility {
                 fileURL.stopAccessingSecurityScopedResource()
             }
         }
+        let isDirectory = (try? fileURL.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory ?? false
         do {
-            try text.write(to: fileURL, atomically: true, encoding: .utf8)
+            if !isDirectory {
+                try text.write(to: fileURL, atomically: true, encoding: .utf8)
+            }
         } catch {
             print(error)
         }

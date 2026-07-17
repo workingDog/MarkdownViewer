@@ -1,4 +1,4 @@
-#  MarkdownViewer 
+#  MarkdownViewer
 
 
 A lightweight SwiftUI app featuring a raw text editor with live Markdown rendering, powered by the [Textual](https://github.com/gonzalezreal/textual) library.

@@ -19,14 +19,19 @@ struct EditTextView: View {
         VStack(alignment: .leading, spacing: 15) {
             HStack {
                 Text(title).font(.headline)
-                Spacer()
                 Button("Save") {
                     if let fileURL {
                         Utility.writeFileContent(text: text, fileURL: fileURL)
                     }
                 }.buttonStyle(.glass)
-            }.frame(width: 150)
-            
+                Spacer()
+                Text({
+                    guard let fileURL else { return "" }
+                    let isDirectory = (try? fileURL.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory ?? false
+                    return isDirectory ? "" : fileURL.lastPathComponent
+                }())
+            }.frame(maxWidth: .infinity)
+
             TextEditor(text: $text)
 #if os(iOS) || os(visionOS)
                 .textInputAutocapitalization(.none)
