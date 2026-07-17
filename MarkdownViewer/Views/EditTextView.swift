@@ -18,7 +18,7 @@ struct EditTextView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
             HStack {
-                Text(title).font(.headline)
+                Text(title).font(.headline).padding(.horizontal, 10)
                 Button("Save") {
                     if let fileURL {
                         Utility.writeFileContent(text: text, fileURL: fileURL)
@@ -29,7 +29,7 @@ struct EditTextView: View {
                     guard let fileURL else { return "" }
                     let isDirectory = (try? fileURL.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory ?? false
                     return isDirectory ? "" : fileURL.lastPathComponent
-                }())
+                }()).padding(.horizontal, 5)
             }.frame(maxWidth: .infinity)
 
             TextEditor(text: $text)
